@@ -1,4 +1,3 @@
-import 'package:bootcamp_app/controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -25,7 +24,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key, required this.title});
-
   final String title;
 
   @override
@@ -35,51 +33,41 @@ class MyHomePage extends ConsumerStatefulWidget {
 class _MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    // final getDataState = ref.watch(getDataPaginateProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                final page = index ~/ 5; //constLimitGlobal;
-                final indexPage = index % 5; //constLimitGlobal;
-                final asyncValue = ref.watch(getDataPaginateProvider(page: (page)));
-                return asyncValue.when(
-                  data: (dataStreams) {
-                    if (dataStreams?.isEmpty ?? true) return null;
-                    var dataStream = (indexPage >= (dataStreams?.length.toInt() ?? 0)) ? null : dataStreams?[indexPage];
-                    if (indexPage >= (dataStreams?.length.toInt() ?? 0)) return null;
-                    // var data = dataStreams?[indexPage];
-                    return ProviderScope(
-                      child: Card(
-                        elevation: 4.0,
+      body: Center(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            setState(() {});
+          },
+          child: FutureBuilder(
+            future: getProducts(),
+            builder: (context, dataku) {
+              if (dataku.connectionState == ConnectionState.done) {
+                if (dataku.hasData) {
+                  return ListView.builder(
+                    itemCount: dataku.data?.length,
+                    itemBuilder: (context, index) {
+                      return Card(
                         child: ListTile(
-                          title: Text(dataStream?['id'].toString() ?? ''),
-                          subtitle: Text(dataStream?['title']),
+                          title: Text(dataku.data?[index]['attributes']['product_name']),
+                          subtitle: Text(dataku.data?[index]['attributes']['product_description']),
                         ),
-                      ),
-                    );
-                  },
-                  loading: () {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                  error: (error, stackTrace) {
-                    return const Center(
-                      child: Text('Error'),
-                    );
-                  },
-                );
-              },
-            ),
+                      );
+                    },
+                  );
+                } else {
+                  return const Text('Data Kosong');
+                }
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
           ),
-        ],
+        ),
       ),
     );
   }
@@ -87,6 +75,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   Future<List> getProducts() async {
     var dio = Dio();
     var response = await dio.get('http://localhost:1337/api/products');
+    debugPrint(response.data.toString());
     return response.data['data'];
   }
 }
