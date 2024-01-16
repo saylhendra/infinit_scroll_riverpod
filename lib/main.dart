@@ -1,9 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(const ProviderScope(child: MyApp()));
+import 'face_detector_screen.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://odsimhzgsfegtywynnyt.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kc2ltaHpnc2ZlZ3R5d3lubnl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDI3NjA0NzksImV4cCI6MjAxODMzNjQ3OX0.y442W_Ig6EH73Jpw8AzlMbuPlZpe7_B1wQU_j37RtIs',
+  );
+
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,7 +32,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Strapi - Flutter'),
+      // home: const MyHomePage(title: 'Strapi - Flutter'),
+      // home: const FlutterSupabaseScreen(title: 'Supabase - Flutter'),
+      // home: const FlutterSupabaseRealtimeScreen(title: 'Supabase - Flutter - Realtime'),
+      home: FaceDetectorView(),
     );
   }
 }

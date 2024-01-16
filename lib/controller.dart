@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'controller.g.dart';
@@ -8,7 +7,6 @@ part 'controller.g.dart';
 class GetDataPaginate extends _$GetDataPaginate {
   @override
   FutureOr<List?> build({required int page}) async {
-    debugPrint('${page}');
     var dio = Dio();
     var response = await dio.get('https://jsonplaceholder.typicode.com/photos?_start=${page}&_limit=5');
     return response.data;

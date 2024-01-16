@@ -1,13 +1,9 @@
 import 'package:bootcamp_app/controller.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class InfinityScrollScreen extends ConsumerStatefulWidget {
-  const InfinityScrollScreen({super.key, required this.title});
-
-  final String title;
-
+  const InfinityScrollScreen({super.key});
   @override
   ConsumerState<InfinityScrollScreen> createState() => _InfinityScrollScreenState();
 }
@@ -15,11 +11,10 @@ class InfinityScrollScreen extends ConsumerStatefulWidget {
 class _InfinityScrollScreenState extends ConsumerState<InfinityScrollScreen> {
   @override
   Widget build(BuildContext context) {
-    // final getDataState = ref.watch(getDataPaginateProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: const Text('Infinity Scroll Screen'),
       ),
       body: Column(
         children: [
@@ -62,11 +57,5 @@ class _InfinityScrollScreenState extends ConsumerState<InfinityScrollScreen> {
         ],
       ),
     );
-  }
-
-  Future<List> getProducts() async {
-    var dio = Dio();
-    var response = await dio.get('http://localhost:1337/api/products');
-    return response.data['data'];
   }
 }
